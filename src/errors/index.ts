@@ -25,3 +25,10 @@ export class WorkoutSessionAlreadyStartedError extends Error {
     this.name = "WorkoutSessionAlreadyStartedError";
   }
 }
+
+export class WorkoutSessionAlreadyCompletedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "WorkoutSessionAlreadyCompletedError";
+  }
+}

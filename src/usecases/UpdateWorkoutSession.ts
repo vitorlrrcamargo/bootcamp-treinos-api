@@ -3,8 +3,7 @@ import dayjs from "dayjs";
 import {
   ForbiddenError,
   NotFoundError,
-  WorkoutPlanNotActiveError,
-  WorkoutSessionAlreadyStartedError,
+  WorkoutSessionAlreadyCompletedError,
 } from "../errors/index.js";
 import { prisma } from "../lib/db.js";
 
@@ -12,14 +11,17 @@ interface InputDto {
   userId: string;
   planId: string;
   dayId: string;
+  sessionId: string;
+  completedAt: Date;
 }
 
 export interface OutputDto {
   userWorkoutSessionId: string;
+  completedAt: string;
   startedAt: string;
 }
 
-export class StartWorkoutSession {
+export class UpdateWorkoutSession {
   public async execute(dto: InputDto): Promise<OutputDto> {
     const workoutPlan = await prisma.workoutPlan.findUnique({
       where: { id: dto.planId },
@@ -31,12 +33,8 @@ export class StartWorkoutSession {
 
     if (workoutPlan.userId !== dto.userId) {
       throw new ForbiddenError(
-        "You are not allowed to start this workout session",
+        "You are not allowed to update this workout session",
       );
-    }
-
-    if (!workoutPlan.isActive) {
-      throw new WorkoutPlanNotActiveError("Workout plan is not active");
     }
 
     const workoutDay = await prisma.workoutDay.findFirst({
@@ -51,29 +49,34 @@ export class StartWorkoutSession {
     }
 
     return prisma.$transaction(async (tx) => {
-      const existingOpenSession = await tx.workoutSession.findFirst({
+      const workoutSession = await tx.workoutSession.findFirst({
         where: {
+          id: dto.sessionId,
           workoutDayId: dto.dayId,
-          completedAt: null,
         },
       });
 
-      if (existingOpenSession) {
-        throw new WorkoutSessionAlreadyStartedError(
-          "Workout day already has an active session",
+      if (!workoutSession) {
+        throw new NotFoundError("Workout session not found");
+      }
+
+      if (workoutSession.completedAt !== null) {
+        throw new WorkoutSessionAlreadyCompletedError(
+          "Workout session is already completed",
         );
       }
 
-      const workoutSession = await tx.workoutSession.create({
+      const updatedSession = await tx.workoutSession.update({
+        where: { id: dto.sessionId },
         data: {
-          workoutDayId: dto.dayId,
-          startedAt: dayjs().toDate(),
+          completedAt: dto.completedAt,
         },
       });
 
       return {
-        userWorkoutSessionId: workoutSession.id,
-        startedAt: dayjs(workoutSession.startedAt).toISOString(),
+        userWorkoutSessionId: updatedSession.id,
+        completedAt: dayjs(updatedSession.completedAt).toISOString(),
+        startedAt: dayjs(updatedSession.startedAt).toISOString(),
       };
     });
   }
