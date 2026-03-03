@@ -83,6 +83,7 @@ Naming rules:
 - ALWAYS use strong validation (z.url, z.iso.date, z.iso.datetime, etc.).
 - NEVER use manual regex for date validation.
 - ALWAYS use `z.enum(WeekDay)` for weekDay fields (imported from `src/generated/prisma/enums.js`).
+- ALWAYS use `z.iso.date()` for date keys in `consistencyByDay` record objects.
 - Prefer `z.interface()` pattern when applicable.
 
 ---
