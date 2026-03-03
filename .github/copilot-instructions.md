@@ -40,6 +40,7 @@ Rules:
 - ALWAYS create route files inside `src/routes`.
 - ALWAYS use `fastify-type-provider-zod`.
 - ALWAYS use Zod v4.
+- ALWAYS include `tags` and `summary` in every Fastify route `schema`.
 - NEVER put business logic inside routes.
 - ALWAYS call a Use Case class.
 - ALWAYS handle errors inside the route (try/catch).
@@ -79,7 +80,7 @@ Naming rules:
 
 - ALWAYS use Zod v4.
 - ALWAYS define creation/update schemas in `src/schemas/index.ts`.
-- ALWAYS use strong validation (z.url, z.iso.date, z.iso.datetime, etc).
+- ALWAYS use strong validation (z.url, z.iso.date, z.iso.datetime, etc.).
 - NEVER use manual regex for date validation.
 - Prefer `z.interface()` pattern when applicable.
 
@@ -174,6 +175,7 @@ DELETE /workout-plans/:id
 - Never skip DTO mapping.
 - Never catch errors inside Use Cases.
 - Never bypass Zod validation.
+- Never omit `tags` and `summary` in Fastify route `schema`.
 - Never write JavaScript (TypeScript only).
 
 ---
