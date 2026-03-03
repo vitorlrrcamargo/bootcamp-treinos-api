@@ -82,6 +82,7 @@ Naming rules:
 - ALWAYS define creation/update schemas in `src/schemas/index.ts`.
 - ALWAYS use strong validation (z.url, z.iso.date, z.iso.datetime, etc.).
 - NEVER use manual regex for date validation.
+- ALWAYS use `z.enum(WeekDay)` for weekDay fields (imported from `src/generated/prisma/enums.js`).
 - Prefer `z.interface()` pattern when applicable.
 
 ---
