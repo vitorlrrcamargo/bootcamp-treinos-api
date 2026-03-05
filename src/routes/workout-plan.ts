@@ -55,6 +55,7 @@ export const workoutPlanRoutes = async (app: FastifyInstance) => {
     method: "GET",
     url: "/",
     schema: {
+      operationId: "listWorkoutPlans",
       tags: ["Workout Plans"],
       summary: "List all workout plans with optional active filter",
       querystring: GetWorkoutPlansQuerySchema,
@@ -100,6 +101,7 @@ export const workoutPlanRoutes = async (app: FastifyInstance) => {
     method: "POST",
     url: "/",
     schema: {
+      operationId: "createWorkoutPlan",
       tags: ["Workout Plans"],
       summary: "Create a new workout plan",
       body: WorkoutPlanSchema.omit({ id: true }),
@@ -150,6 +152,7 @@ export const workoutPlanRoutes = async (app: FastifyInstance) => {
     method: "GET",
     url: "/:id",
     schema: {
+      operationId: "getWorkoutPlan",
       tags: ["Workout Plans"],
       summary: "Get a workout plan by ID",
       params: GetWorkoutPlanParamsSchema,
@@ -210,6 +213,7 @@ export const workoutPlanRoutes = async (app: FastifyInstance) => {
     method: "GET",
     url: "/:planId/days/:dayId",
     schema: {
+      operationId: "getWorkoutDay",
       tags: ["Workout Days"],
       summary: "Get a workout day with exercises and sessions",
       params: GetWorkoutDayParamsSchema,
@@ -271,6 +275,7 @@ export const workoutPlanRoutes = async (app: FastifyInstance) => {
     method: "POST",
     url: "/:planId/days/:dayId/sessions",
     schema: {
+      operationId: "startWorkoutSession",
       tags: ["Workout Sessions"],
       summary: "Start a new workout session",
       params: StartWorkoutSessionParamsSchema,
@@ -348,6 +353,7 @@ export const workoutPlanRoutes = async (app: FastifyInstance) => {
     method: "PATCH",
     url: "/:planId/days/:dayId/sessions/:sessionId",
     schema: {
+      operationId: "updateWorkoutSession",
       tags: ["Workout Sessions"],
       summary: "Complete a workout session",
       params: UpdateWorkoutSessionParamsSchema,

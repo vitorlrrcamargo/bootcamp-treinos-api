@@ -16,7 +16,7 @@ interface InputDto {
 
 export interface OutputDto {
   activeWorkoutPlanId: string;
-  todayWorkoutDay: {
+  todayWorkoutDay?: {
     workoutPlanId: string;
     id: string;
     name: string;
@@ -87,9 +87,9 @@ export class GetHomeData {
       (day) => day.weekDay === targetWeekDay,
     );
 
-    if (!todayWorkoutDay) {
-      throw new NotFoundError("No workout day found for this date");
-    }
+    // if (!todayWorkoutDay) {
+    //   throw new NotFoundError("No workout day found for this date");
+    // }
 
     // Build consistency by day for the entire week
     const consistencyByDay: {
@@ -146,16 +146,19 @@ export class GetHomeData {
 
     return {
       activeWorkoutPlanId: activeWorkoutPlan.id,
-      todayWorkoutDay: {
-        workoutPlanId: activeWorkoutPlan.id,
-        id: todayWorkoutDay.id,
-        name: todayWorkoutDay.name,
-        isRest: todayWorkoutDay.isRest,
-        weekDay: todayWorkoutDay.weekDay,
-        estimatedDurationInSeconds: todayWorkoutDay.estimatedDurationInSeconds,
-        coverImageUrl: todayWorkoutDay.coverImageUrl ?? undefined,
-        exercisesCount: todayWorkoutDay.exercises.length,
-      },
+      todayWorkoutDay: todayWorkoutDay
+        ? {
+            workoutPlanId: activeWorkoutPlan.id,
+            id: todayWorkoutDay.id,
+            name: todayWorkoutDay.name,
+            isRest: todayWorkoutDay.isRest,
+            weekDay: todayWorkoutDay.weekDay,
+            estimatedDurationInSeconds:
+              todayWorkoutDay.estimatedDurationInSeconds,
+            coverImageUrl: todayWorkoutDay.coverImageUrl ?? undefined,
+            exercisesCount: todayWorkoutDay.exercises.length,
+          }
+        : undefined,
       workoutStreak,
       consistencyByDay,
     };
