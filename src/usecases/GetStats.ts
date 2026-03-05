@@ -1,6 +1,10 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
 
+import { calculateWorkoutStreak } from "../lib/calculate-streak.js";
 import { prisma } from "../lib/db.js";
+
+dayjs.extend(utc);
 
 interface InputDto {
   userId: string;
@@ -110,8 +114,16 @@ export class GetStats {
       }
     });
 
-    // Calculate workout streak
-    const workoutStreak = this.calculateStreak(consistencyByDay);
+    const activeWorkoutPlan = await prisma.workoutPlan.findFirst({
+      where: {
+        userId: dto.userId,
+        isActive: true,
+      },
+    });
+
+    const workoutStreak = activeWorkoutPlan
+      ? await calculateWorkoutStreak(activeWorkoutPlan.id, dayjs.utc(dto.to))
+      : 0;
 
     return {
       workoutStreak,
@@ -120,42 +132,5 @@ export class GetStats {
       conclusionRate,
       totalTimeInSeconds,
     };
-  }
-
-  private calculateStreak(consistencyByDay: {
-    [key: string]: {
-      workoutDayCompleted: boolean;
-      workoutDayStarted: boolean;
-    };
-  }): number {
-    // Get all dates sorted in descending order
-    const dates = Object.keys(consistencyByDay).sort().reverse();
-
-    if (dates.length === 0) {
-      return 0;
-    }
-
-    let streak = 0;
-    let currentDate = dayjs.utc(dates[0]);
-
-    for (const dateKey of dates) {
-      const expectedDate = currentDate.format("YYYY-MM-DD");
-
-      // If this date is not the expected date, streak is broken
-      if (dateKey !== expectedDate) {
-        break;
-      }
-
-      // If workout was completed on this date, increment streak
-      if (consistencyByDay[dateKey].workoutDayCompleted) {
-        streak++;
-        currentDate = currentDate.subtract(1, "day");
-      } else {
-        // If workout was not completed, streak breaks
-        break;
-      }
-    }
-
-    return streak;
   }
 }
