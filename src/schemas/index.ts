@@ -61,7 +61,7 @@ export const GetHomeDataParamsSchema = z.object({
 });
 
 export const GetHomeDataResponseSchema = z.object({
-  activeWorkoutPlanId: z.uuid(),
+  activeWorkoutPlanId: z.uuid().optional(),
   todayWorkoutDay: z
     .object({
       workoutPlanId: z.uuid(),

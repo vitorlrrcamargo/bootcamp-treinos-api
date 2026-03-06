@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import weekday from "dayjs/plugin/weekday.js";
 
-import { NotFoundError } from "../errors/index.js";
 import { WeekDay } from "../generated/prisma/enums.js";
 import { calculateWorkoutStreak } from "../lib/calculate-streak.js";
 import { prisma } from "../lib/db.js";
@@ -16,7 +15,7 @@ interface InputDto {
 }
 
 export interface OutputDto {
-  activeWorkoutPlanId: string;
+  activeWorkoutPlanId?: string;
   todayWorkoutDay?: {
     workoutPlanId: string;
     id: string;
@@ -67,7 +66,12 @@ export class GetHomeData {
     });
 
     if (!activeWorkoutPlan) {
-      throw new NotFoundError("No active workout plan found");
+      return {
+        activeWorkoutPlanId: undefined,
+        todayWorkoutDay: undefined,
+        workoutStreak: 0,
+        consistencyByDay: {},
+      };
     }
 
     // Map date to WeekDay enum

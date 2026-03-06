@@ -1,4 +1,4 @@
-import { google } from "@ai-sdk/google";
+import { groq } from "@ai-sdk/groq";
 import {
   convertToModelMessages,
   stepCountIs,
@@ -49,7 +49,7 @@ export const aiRoutes = async (app: FastifyInstance) => {
 
       const { messages } = request.body;
       const result = streamText({
-        model: google("gemini-2.5-flash"),
+        model: groq("llama-3.1-8b-instant"),
         system: `Você é um personal trainer virtual especialista em montagem de planos de treino personalizados.
 
 ## Personalidade
