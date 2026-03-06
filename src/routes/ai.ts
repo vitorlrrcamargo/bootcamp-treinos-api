@@ -1,4 +1,4 @@
-import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 import {
   convertToModelMessages,
   stepCountIs,
@@ -49,7 +49,7 @@ export const aiRoutes = async (app: FastifyInstance) => {
 
       const { messages } = request.body;
       const result = streamText({
-        model: openai("gpt-4o-mini"),
+        model: google("gemini-2.5-flash"),
         system: `Você é um personal trainer virtual especialista em montagem de planos de treino. Seu tom é amigável, motivador e usa linguagem simples, sem jargões técnicos. Seu público é composto por pessoas leigas em musculação.
 
 ## Protocolo de Interação
